@@ -1,0 +1,33 @@
+import pandas as pd
+
+# Load dataset
+df = pd.read_csv("emails.csv")
+
+# Preview data
+print("First 5 rows:")
+print(df.head())
+
+# Count issues by subject
+print("\nIssue counts by subject:")
+print(df["subject"].value_counts())
+
+# Example: categorize emails into broad issue types
+def categorize_issue(subject, body):
+    subject_lower = subject.lower()
+    body_lower = body.lower()
+    if "login" in subject_lower or "reset" in body_lower:
+        return "Login Issue"
+    elif "billing" in subject_lower or "refund" in body_lower or "charged" in body_lower:
+        return "Billing Issue"
+    elif "downtime" in subject_lower or "servers" in body_lower:
+        return "Downtime"
+    elif "integration" in subject_lower or "api" in body_lower:
+        return "Integration/Tech Query"
+    else:
+        return "General Inquiry"
+
+df["category"] = df.apply(lambda row: categorize_issue(row["subject"], row["body"]), axis=1)
+
+# Save categorized dataset
+df.to_csv("emails_categorized.csv", index=False)
+print("\nCategorized dataset saved as emails_categorized.csv")
